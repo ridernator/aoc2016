@@ -1,0 +1,86 @@
+#!/bin/bash
+
+# Calculate new orientation
+reorient() {
+    local currentOrientation=$1
+    local turnDirection=$2
+
+    if test $turnDirection = 'L'; then
+        case $orientation in
+            'N')
+                echo "W"
+            ;;
+
+            'E')
+                echo "N"
+            ;;
+
+            'S')
+                echo "E"
+            ;;
+
+            'W')
+                echo "S"
+            ;;
+        esac
+    else
+        case $orientation in
+            'N')
+                echo "E"
+            ;;
+
+            'E')
+                echo "S"
+            ;;
+
+            'S')
+                echo "W"
+            ;;
+
+            'W')
+                echo "N"
+            ;;
+        esac
+    fi
+}
+
+main() {
+    local -r INPUT="../data/input"
+
+    # Read in list of directions
+    local -a directions=( $(cat $INPUT | tr -d ' ' | tr ',' '\n') )
+
+    local orientation='N'
+    local -i poX=0
+    local -i poY=0
+
+    # Loop through each direction
+    for direction in ${directions[@]}; do
+        local -i magnitude=$(echo $direction | tr -d '[A-Z]')
+        local turnDirection=$(echo $direction | tr -d '[0-9]')
+
+        orientation=$(reorient $orientation $turnDirection)
+
+        case $orientation in
+            'N')
+                ((posY += magnitude))
+            ;;
+
+            'E')
+                ((posX += magnitude))
+            ;;
+
+            'S')
+                ((posY -= magnitude))
+            ;;
+
+            'W')
+                ((posX -= magnitude))
+            ;;
+        esac
+    done
+
+    echo "Final position is ($posX, $posY). Distance is $((posX + posY))"
+}
+
+main "$@"
