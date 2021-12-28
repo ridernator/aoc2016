@@ -53,6 +53,7 @@ main() {
     local orientation='N'
     local -i posX=0
     local -i posY=0
+    local -A positions=( ["0,0"]=1 )
 
     # Loop through each direction
     for direction in ${directions[@]}; do
@@ -61,26 +62,38 @@ main() {
 
         orientation=$(reorient $orientation $turnDirection)
 
-        case $orientation in
-            'N')
-                ((posY += magnitude))
-            ;;
+        # We now need to know every point we pass though
+        for ((index=0; index<magnitude; ++index)); do
+            case $orientation in
+                'N')
+                    ((++posY))
+                ;;
 
-            'E')
-                ((posX += magnitude))
-            ;;
+                'E')
+                    ((++posX))
+                ;;
 
-            'S')
-                ((posY -= magnitude))
-            ;;
+                'S')
+                    ((--posY))
+                ;;
 
-            'W')
-                ((posX -= magnitude))
-            ;;
-        esac
+                'W')
+                    ((--posX))
+                ;;
+            esac
+
+            # Maintain an array of every point and compare against it at each step
+            for position in ${!positions[@]}; do
+                if test $position = "${posX},${posY}"; then
+                    echo "Easter Bunny HQ is at $posX, $posY. Distance is $((posX + posY))"
+
+                    exit 0
+                fi
+            done
+
+            positions["${posX},${posY}"]=1
+        done
     done
-
-    echo "Easter Bunny HQ is at $posX, $posY. Distance is $((posX + posY))"
 }
 
 main "$@"
