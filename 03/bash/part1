@@ -1,0 +1,19 @@
+#!/bin/bash
+
+main() {
+    local -r INPUT="../data/input"
+
+    local -i validCount=0
+
+    while read line; do
+        local -a nums=( $(echo $line | tr ' ' '\n' | sort -n) )
+
+        if test $((nums[0] + nums[1])) -gt ${nums[2]}; then
+            ((++validCount))
+        fi
+    done < "$INPUT"
+
+    echo "Number of valid triangles is $validCount"
+}
+
+main "$@"
