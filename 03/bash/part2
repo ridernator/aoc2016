@@ -1,0 +1,38 @@
+#!/bin/bash
+
+main() {
+    local -r INPUT="../data/input"
+
+    local -i validCount=0
+
+    local -i index=0
+    local -a nums
+    local -ri NUM_LINES=$(wc -l $INPUT | cut -d' ' -f1)
+
+    while read line; do
+        nums[$index]=$(echo $line | cut -d' ' -f1)
+        nums[$((index + NUM_LINES))]=$(echo $line | cut -d' ' -f2)
+        nums[$((index + NUM_LINES + NUM_LINES))]=$(echo $line | cut -d' ' -f3)
+        ((++index))
+    done < "$INPUT"
+    
+    for ((index=0; index<${#nums[@]}; index+=3)); do
+        if test ${nums[$index]} -ge ${nums[$((index + 1))]} -a ${nums[$index]} -ge ${nums[$((index + 2))]}; then
+            if test $((nums[$((index + 1))] + nums[$((index + 2))])) -gt ${nums[$index]}; then
+                ((++validCount))
+            fi
+        elif test ${nums[$((index + 1))]} -ge ${nums[$index]} -a ${nums[$((index + 1))]} -ge ${nums[$((index + 2))]}; then
+            if test $((nums[$index] + nums[$((index + 2))])) -gt ${nums[$((index + 1))]}; then
+                ((++validCount))
+            fi
+        else
+            if test $((nums[$index] + nums[$((index + 1))])) -gt ${nums[$((index + 2))]}; then
+                ((++validCount))
+            fi
+        fi
+    done
+
+    echo "Number of valid triangles is $validCount"
+}
+
+main "$@"
