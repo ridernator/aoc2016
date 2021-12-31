@@ -1,0 +1,70 @@
+#!/bin/bash
+
+main() {
+    local -r INPUT="../data/input"
+
+    local -i START_NUM=5
+
+    echo -n "Bathroom code is "
+
+    local -i number=$START_NUM
+    while read line; do
+        for ((index=0; index<${#line}; ++index)); do
+            case ${line:$index:1} in
+                'U')
+                    if test $number -ne 5  -a \
+                            $number -ne 2  -a \
+                            $number -ne 1  -a \
+                            $number -ne 4  -a \
+                            $number -ne 9; then
+                        if test $number -gt 5 -a $number -lt 13; then
+                            ((number -= 4))
+                        else
+                            ((number -= 2))
+                        fi
+                    fi
+                ;;
+
+                'D')
+                    if test $number -ne 5  -a \
+                            $number -ne 10 -a \
+                            $number -ne 13 -a \
+                            $number -ne 12 -a \
+                            $number -ne 9; then
+                        if test $number -gt 1 -a $number -lt 9; then
+                            ((number += 4))
+                        else
+                            ((number += 2))
+                        fi
+                    fi
+                ;;
+
+                'L')
+                    if test $number -ne 1  -a \
+                            $number -ne 2  -a \
+                            $number -ne 5  -a \
+                            $number -ne 10 -a \
+                            $number -ne 13; then
+                        ((--number))
+                    fi
+                ;;
+
+                'R')
+                    if test $number -ne 1  -a \
+                            $number -ne 4  -a \
+                            $number -ne 9  -a \
+                            $number -ne 12 -a \
+                            $number -ne 13; then
+                        ((++number))
+                    fi
+                ;;
+            esac
+        done
+
+        printf "%X" $number
+    done < "$INPUT"
+
+    echo
+}
+
+main "$@"
