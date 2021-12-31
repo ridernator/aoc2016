@@ -1,0 +1,47 @@
+#!/bin/bash
+
+main() {
+    local -r INPUT="../data/input"
+
+    local -i START_NUM=5
+
+    echo -n "Bathroom code is "
+
+    while read line; do
+        local -i number=$START_NUM
+
+        for ((index=0; index<${#line}; ++index)); do
+            case ${line:$index:1} in
+                'U')
+                    if test $number -gt 3; then
+                        ((number -= 3))
+                    fi
+                ;;
+
+                'D')
+                    if test $number -lt 7; then
+                        ((number += 3))
+                    fi
+                ;;
+
+                'L')
+                    if test $((number % 3)) -ne 1; then
+                        ((--number))
+                    fi
+                ;;
+
+                'R')
+                    if test $((number % 3)) -ne 0; then
+                        ((++number))
+                    fi
+                ;;
+            esac
+        done
+
+        echo -n $number
+    done < "$INPUT"
+
+    echo
+}
+
+main "$@"
