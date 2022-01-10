@@ -1,0 +1,33 @@
+#!/bin/bash
+
+main() {
+    local -r INPUT="../data/input"
+    local -a lines
+    local -i index=0
+    local message=""
+
+    # Read all lines
+    while read line; do
+        lines[$((index++))]="$line"
+    done < "$INPUT"
+
+    # Loop through each character
+    for ((index=0; index<${#lines[0]}; ++index)); do
+        local -A charCounts
+
+        for line in ${lines[@]}; do
+            ((++charCounts[${line:$index:1}]))
+        done
+
+        # Apped least popular character
+        message="${message}$(for char in ${!charCounts[@]}; do
+                                 echo -e "${charCounts[$char]} $char"
+                             done | sort -n | head -n 1 | cut -d' ' -f2)"
+
+        unset charCounts
+    done
+
+    echo "Decyphered message is : $message"
+}
+
+main "$@"
