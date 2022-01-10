@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+testForAbba() {
+    local -r test="$1"
+
+    for ((index=0; index<${#test} - 3; ++index)); do
+        local a=${test:$index:1}
+        local b=${test:$((index + 1)):1}
+
+        if test $a != $b -a \
+                $a = ${test:$((index + 3)):1} -a \
+                $b = ${test:$((index + 2)):1}; then
+            return 0
+        fi
+    done
+
+    return 1
+}
+
+main() {
+    local -r INPUT="../data/input"
+
+    local -i tlsCount=0
+
+    # Read all addresses
+    while read address; do
+        unset insideBrackets
+        unset outsideBrackets
+
+        local -a insideBrackets
+        local -a outsideBrackets
+
+        # Count brackets
+        local -i numBrackets=$(echo $address | tr --delete --complement '[' | wc --chars)
+
+        # Create arrays a values inside and outside of brackets
+        for ((index=0; index<numBrackets; ++index)); do
+            insideBrackets[$index]=$(echo $address | cut --delimiter=']' --fields=$((index + 1)) | cut --delimiter='[' --fields=2)
+            outsideBrackets[$index]=$(echo $address | cut --delimiter='[' --fields=$((index + 1)) | cut --delimiter=']' --fields=2)
+        done
+        outsideBrackets[$numBrackets]=$(echo $address | cut --delimiter='[' --fields=$((numBrackets + 1)) | cut --delimiter=']' --fields=2)
+
+        # Test no ABBAs in brackets
+        for inside in ${insideBrackets[@]}; do
+            if testForAbba $inside; then
+                echo "$address does not support TLS : ABBA in hypernet sequence \"$inside\""
+                continue 2
+            fi
+        done
+
+        # Find at least 1 ABBA outside brackets
+        local outsideAbbaFound="false"
+        for outside in ${outsideBrackets[@]}; do
+            if testForAbba $outside; then
+                outsideAbbaFound="true"
+                break
+            fi
+        done
+
+        if test $outsideAbbaFound = "true"; then
+            echo "$address does support TLS"
+            ((++tlsCount))
+        else
+            echo "$address does not support TLS : No ABBA"
+        fi
+    done < "$INPUT"
+
+    echo "$tlsCount addresses support TLS"
+}
+
+main "$@"
