@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+main() {
+    local -r INPUT="../data/inputSimple"
+
+    # Read all instructions
+    while read instruction; do
+        :
+    done < "$INPUT"
+}
+
+main "$@"
