@@ -146,5 +146,5 @@ int main() {
         advance(direction, amount, x, y);
     }
 
-    std::cout << "Easter Bunny HQ is at " << x << ", " << y << ". Distance is " << (x + y) << std::endl;
+    std::cout << "Easter Bunny HQ is at " << x << ", " << y << ". Distance is " << (abs(x) + abs(y)) << std::endl;
 }
