@@ -1,1 +1,1 @@
-See https://adventofcode.com/2015/day/25
+See https://adventofcode.com/2016/day/25
